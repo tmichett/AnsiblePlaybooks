@@ -1,0 +1,12 @@
+---
+- name: Manage Services
+  hosts: serverc
+  vars:
+    svc:
+      - svc_name: httpd
+        svc_state: started
+        svc_enabled: yes
+      
+      
+  roles:
+    - tmichett.manage_services

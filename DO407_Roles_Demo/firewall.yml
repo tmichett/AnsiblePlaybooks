@@ -1,0 +1,15 @@
+---
+- name: Install Software Packages
+  hosts: serverc
+  vars:
+    fw:
+      - fw_port: 8080
+        fw_proto: tcp
+      - fw_port: 9090
+        fw_proto: tcp
+    fw_svc:
+      - fw_svc_name: http
+      - fw_svc_name: https
+     
+  roles:
+    - tmichett.manage_firewall

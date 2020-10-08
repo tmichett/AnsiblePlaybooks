@@ -1,0 +1,54 @@
+---
+- name: Install Software Packages and Configure services
+  hosts: serverb
+
+# Install Packages
+  roles:
+    - role: tmichett.deploy_packages
+      vars:
+        pkg_name:
+          - httpd
+          - firewalld
+          - mariadb-server
+          - php
+          - php-mysql
+
+
+# Configure Firewall    
+    - role: tmichett.manage_firewall
+      vars:
+        fw_svc:
+          - fw_svc_name: http
+
+# Configure and Mange Services
+    - role: tmichett.manage_services
+      vars:
+        svc:
+          - svc_name: httpd
+            svc_state: started
+            svc_enabled: yes
+          
+          - svc_name: firewalld
+            svc_state: started
+            svc_enabled: yes
+          
+          - svc_name: mariadb
+            svc_state: started
+            svc_enabled: yes
+
+# Install Webserver Content
+  tasks:
+    - name: test php page is installed 
+      get_url:
+        url: "http://materials.example.com/labs/playbook-review/index.php" 
+        dest: /var/www/html/index.php
+        mode: 0644
+
+- name: Test internet web server
+  hosts: localhost
+  become: no
+  tasks:
+    - name: connect to internet web server 
+      uri:
+        url: http://serverb.lab.example.com 
+        status_code: 200
