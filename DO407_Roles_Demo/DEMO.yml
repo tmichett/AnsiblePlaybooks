@@ -2,8 +2,9 @@
 - name: Install Software Packages and Configure services
   hosts: serverb
 
-# Install Packages
+# Roles to use for tasks to install packages, modify firewall, and administer services.
   roles:
+  # Install Packages
     - role: tmichett.deploy_packages
       vars:
         pkg_name:
@@ -44,6 +45,7 @@
         dest: /var/www/html/index.php
         mode: 0644
 
+# Additional Play to test webserver from remote host without using elevated permissions.
 - name: Test internet web server
   hosts: localhost
   become: no
