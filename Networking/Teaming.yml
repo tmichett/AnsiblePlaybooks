@@ -1,0 +1,34 @@
+---
+- name: Create a Network Team Device on ServerB 
+  hosts: localhost 
+  vars:
+    nic1: ens9
+    nic2: ens11
+    team_ip: 192.168.30.200/24
+    gateway: 192.168.30.1
+  tasks:
+    - name: Add an Team connection with static IP configuration
+      nmcli:
+        conn_name: my-team1
+        ifname: my-team1
+        type: team
+        ip4: "{{ team_ip }}"
+        gw4: "{{ gateway }}"
+        state: present
+        autoconnect: yes
+
+    - name: Try nmcli add teams-slave
+      nmcli:
+        type: team-slave
+        conn_name: my-team1-nic1
+        ifname: "{{ nic1  }}"
+        master: my-team1
+        state: present
+
+    - name: Try nmcli add teams-slave
+      nmcli:
+        type: team-slave
+        conn_name: my-team1-nic2
+        ifname: "{{ nic2  }}"
+        master: my-team1
+        state: present
