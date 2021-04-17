@@ -1,6 +1,6 @@
 ---
 - name: Create an RPM Report
-  hosts: localhost
+  hosts: rhel83 
   vars:
     var1: Value
 
