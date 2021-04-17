@@ -1,0 +1,20 @@
+---
+- name: Create an RPM Report
+  hosts: localhost
+  vars:
+    var1: Value
+
+  tasks:
+    - name: Install updates
+      yum:
+        name: '*'
+        update_cache: yes
+        state: latest
+    - name: List updated packages
+      shell: rpm -qa --last | grep "$(date +%a\ %d\ %b\ %Y)" |cut -f 1 -d " "
+      register: result
+      args:
+        warn: no
+    - name: Updates packages
+      debug:
+        msg="{{ result.stdout_lines }}"
