@@ -59,3 +59,18 @@
         module: copy
         content: "{{ result.stdout_lines | sort | to_nice_yaml }}"
         dest: packages_updated.txt
+
+####
+#### This section and play is meant to compare the files
+####
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: "Show the difference between files"
+      copy:
+        src: packages_to_be_updated.txt
+        dest: packages_updated.txt
+      check_mode: yes
+      diff: yes
+      tags: check
