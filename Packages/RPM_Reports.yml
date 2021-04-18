@@ -24,19 +24,20 @@
     - name: Capture list of packages to be updated in a file
       local_action:
         module: copy
-        content: "{{ yum_output.results | map(attribute='name') | list | sort | to_nice_yaml}}"
-        dest: packages.txt
+        content: "{{ yum_output.results | map(attribute='name') | list | sort | to_nice_yaml }}"
+        dest: packages_to_be_updated.txt
 
 ####
 #### This section is to perform upgrades and will change the system
 ####
 
 
-    #- name: Install updates
-    #  yum:
-    #    name: '*'
-    #    update_cache: yes
-    #    state: latest
+    - name: Install updates
+      yum:
+        name: '*'
+        update_cache: yes
+        state: latest
+      become: yes
 
 
 ####
@@ -51,4 +52,10 @@
 
     - name: Updated packages
       debug:
-        msg="{{ result.stdout_lines | sort}}"
+        msg="{{ result.stdout_lines | sort | to_nice_yaml }}"
+
+    - name: Capture list of updated packages to a file
+      local_action:
+        module: copy
+        content: "{{ result.stdout_lines | sort | to_nice_yaml }}"
+        dest: packages_updated.txt

@@ -33,8 +33,15 @@ This contains automation playbooks for getting various forms of package data. It
       dest: packages.txt
 ----
 
-.Note Header
+.Sorting and Formatting Output
 [NOTE]
 ====
 The items above process the values mapping the name output into a list. It further *sorts* the list for easier comparisons.
+====
+
+
+.Privileges and Security
+[IMPORTANT]
+====
+The *RPM_Reports.yml* playbook also gives an example of _Least Privileges_ in that only the task in the playbook requiring elevated privileges causes the task to be run as root. All other tasks are run as the regular standard user without additional system privileges.
 ====
