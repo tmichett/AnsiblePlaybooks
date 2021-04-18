@@ -1,0 +1,40 @@
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:status:
+:outfilesuffix: .adoc
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+# Ansible Playbook for Getting Package Data
+
+This contains automation playbooks for getting various forms of package data. It should have some examples for outputs to STDOUT and files.
+
+.Getting a YAML Formatted File Listing Locally in a File
+[source,yaml]
+----
+  - name: Capture list of packages to be updated in a file
+    local_action:
+      module: copy
+      content: "{{ yum_output.results | map(attribute='name') | list | sort | to_nice_yaml}}"
+      dest: packages.txt
+----
+
+.Getting a CSV Formatted File Listing Locally in a File
+[source,yaml]
+----
+  - name: Capture list of packages to be updated in a file
+    local_action:
+      module: copy
+      content: "{{ yum_output.results | map(attribute='name') | list | sort }}"
+      dest: packages.txt
+----
+
+.Note Header
+[NOTE]
+====
+The items above process the values mapping the name output into a list. It further *sorts* the list for easier comparisons.
+====

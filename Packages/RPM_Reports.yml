@@ -1,20 +1,54 @@
 ---
 - name: Create an RPM Report
-  hosts: rhel83 
+  hosts: rhel83
   vars:
     var1: Value
 
   tasks:
-    - name: Install updates
+
+####
+#### This section is to collect and perform pre-upgrade tasks and checks. It DOES NOT perform any upgrades
+####
+
+    - name: List packages to be updated - collect as yum_ouput
       yum:
-        name: '*'
-        update_cache: yes
-        state: latest
-    - name: List updated packages
+        list: updates
+        update_cache: true
+      register: yum_output
+
+    - name: Output list of packages to be updated
+      debug:
+        #var: yum_ouput
+        msg: "{{ yum_output.results | map(attribute='name') | list | sort}}"
+
+    - name: Capture list of packages to be updated in a file
+      local_action:
+        module: copy
+        content: "{{ yum_output.results | map(attribute='name') | list | sort | to_nice_yaml}}"
+        dest: packages.txt
+
+####
+#### This section is to perform upgrades and will change the system
+####
+
+
+    #- name: Install updates
+    #  yum:
+    #    name: '*'
+    #    update_cache: yes
+    #    state: latest
+
+
+####
+#### This section is to collect and perform post-upgrade tasks and checks
+####
+
+    - name: List updated packages with Shell and RPM Command
       shell: rpm -qa --last | grep "$(date +%a\ %d\ %b\ %Y)" |cut -f 1 -d " "
       register: result
       args:
         warn: no
-    - name: Updates packages
+
+    - name: Updated packages
       debug:
-        msg="{{ result.stdout_lines }}"
+        msg="{{ result.stdout_lines | sort}}"
