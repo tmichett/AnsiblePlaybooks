@@ -1,0 +1,29 @@
+---
+- name: Create an RPM Report
+  hosts: rhel7
+  vars:
+    var1: Value
+
+  tasks:
+
+####
+#### This section is to collect and perform pre-upgrade tasks and checks. It DOES NOT perform any upgrades
+####
+
+    - name: List packages to be updated - collect as yum_ouput
+      yum:
+        list: updates
+        update_cache: true
+      register: yum_output
+
+    - name: Output list of packages to be updated
+      debug:
+        #var: yum_ouput
+#        msg: "{{ yum_output.results | map(attribute='envra') | regex_replace('/\d') | list | sort |  to_nice_yaml }}"
+        msg: "{{ yum_output.results | map(attribute='envra') | list | sort |  to_nice_yaml }}"
+    - name: Capture list of packages to be updated in a file
+      local_action:
+        module: copy
+#        content: "{{ yum_output.results | map(attribute='envra') | regex_replace('*:$') | list | sort | to_nice_yaml }}"
+        content: "{{ yum_output.results | map(attribute='envra') |  list | sort | to_nice_yaml }}"
+        dest: packages_to_be_updated.txt

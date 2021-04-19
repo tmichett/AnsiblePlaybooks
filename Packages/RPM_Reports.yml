@@ -19,12 +19,17 @@
     - name: Output list of packages to be updated
       debug:
         #var: yum_ouput
-        msg: "{{ yum_output.results | map(attribute='name') | list | sort}}"
+        msg: "{{ yum_output.results | map(attribute='envra') | list | sort}}"
+
+###############################################################################
+###    Changed map(attribute='envra') from map(attribute='name')
+###    This gives the exact RPM name so it is easier to compare for output
+###############################################################################
 
     - name: Capture list of packages to be updated in a file
       local_action:
         module: copy
-        content: "{{ yum_output.results | map(attribute='name') | list | sort | to_nice_yaml }}"
+        content: "{{ yum_output.results | map(attribute='envra') | list | sort | to_nice_yaml }}"
         dest: packages_to_be_updated.txt
 
 ####
