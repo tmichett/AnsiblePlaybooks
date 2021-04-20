@@ -1,6 +1,6 @@
 ---
 - name: Create an RPM Report
-  hosts: rhel83
+  hosts: rhel7
   vars:
     var1: Value
 
@@ -31,6 +31,25 @@
         module: copy
         content: "{{ yum_output.results | map(attribute='envra') | list | sort | to_nice_yaml }}"
         dest: packages_to_be_updated.txt
+
+    - name: Format List of packages to remove extra information Numbers and Colon before RPM Name
+      replace:
+        path: packages_to_be_updated.txt
+#        regexp: '^/[]^:\r\n]+:?$'
+        regexp: '[0-9]:'   ### This will get rid of the numbers and the colon
+      delegate_to: localhost
+
+###
+### Need to Re-Sort the files after the pre-pended numbers and colon removed
+###
+    - name: Sort lists
+      debug:
+        msg: "{{ lookup('file', 'packages_to_be_updated.txt') }}"
+
+    - name: Sort lists
+      shell: sort -o packages_to_be_updated_sorted.txt packages_to_be_updated.txt
+      delegate_to: localhost
+
 
 ####
 #### This section is to perform upgrades and will change the system
@@ -74,7 +93,7 @@
   tasks:
     - name: "Show the difference between files"
       copy:
-        src: packages_to_be_updated.txt
+        src: packages_to_be_updated_sorted.txt
         dest: packages_updated.txt
       check_mode: yes
       diff: yes
