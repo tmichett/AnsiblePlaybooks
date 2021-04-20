@@ -44,3 +44,7 @@
     - name: Sort lists
       debug:
         msg: "{{ lookup('file', 'packages_to_be_updated.txt') }}"
+
+    - name: Sort lists
+      shell: sort -o packages_to_be_updated_sorted.txt packages_to_be_updated.txt
+      delegate_to: localhost
