@@ -20,10 +20,27 @@
       debug:
         #var: yum_ouput
 #        msg: "{{ yum_output.results | map(attribute='envra') | regex_replace('/\d') | list | sort |  to_nice_yaml }}"
-        msg: "{{ yum_output.results | map(attribute='envra') | list | sort |  to_nice_yaml }}"
+#        msg: "{{ yum_output.results | map(attribute='envra') | list | sort | regex_replace('0:')| to_nice_yaml }}"
+        msg: "{{ yum_output.results | map(attribute='envra') | list | sort | to_nice_yaml }}"
+
     - name: Capture list of packages to be updated in a file
       local_action:
         module: copy
 #        content: "{{ yum_output.results | map(attribute='envra') | regex_replace('*:$') | list | sort | to_nice_yaml }}"
+#        content: "{{ yum_output.results | map(attribute='envra') |  list | sort | regex_replace('0:') | to_nice_yaml }}"
         content: "{{ yum_output.results | map(attribute='envra') |  list | sort | to_nice_yaml }}"
         dest: packages_to_be_updated.txt
+
+    - name: Format List of packages to remove extra information Numbers and Colon before RPM Name
+      replace:
+        path: packages_to_be_updated.txt
+#        regexp: '^/[]^:\r\n]+:?$'
+        regexp: '[0-9]:'   ### This will get rid of the numbers and the colon
+      delegate_to: localhost
+
+###
+### Need to Re-Sort the files after the pre-pended numbers and colon removed
+###
+    - name: Sort lists
+      debug:
+        msg: "{{ lookup('file', 'packages_to_be_updated.txt') }}"
