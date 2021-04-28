@@ -1,0 +1,19 @@
+- hosts: localhost
+  vars_files:
+    - sat_vars.yml
+  vars:
+    activation_key: OperationsServers
+    lifecycle_env: Library
+    organization: Operations
+    Sat_User_Name: Username
+    Sat_User_PW: Password
+    SatURL: https://satellite.lab.example.com
+
+
+  tasks:
+    - name: Prepare System for Satellite Registration
+
+
+    - name: Register with Activation key
+
+    - name: Register with UserName and Password
