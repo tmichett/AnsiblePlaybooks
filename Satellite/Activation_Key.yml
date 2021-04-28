@@ -1,0 +1,32 @@
+- hosts: localhost
+  vars_files:
+    - sat_vars.yml
+  vars:
+    activation_key: OperationsServers
+    lifecycle_env: Library
+    content_view: Default Organization View
+    subscriptions:
+      - name: "Red Hat Enterprise Linux Server, Standard (Physical or Virtual Nodes)"
+    organization: Operations
+    repositories:
+      - satellite-tools-6.6-for-rhel-8-x86_64-rpms
+      - rhel-8-for-x86_64-baseos-rpms
+      - rhel-8-for-x86_64-appstream-rpms
+
+  tasks:
+    - name: Create the {{ activation_key }}Activation Key
+      redhat.satellite.activation_key:
+        name: "{{ activation_key }}"
+        lifecycle_environment: "{{ lifecycle_env }}"
+        content_view: "{{ content_view }}"
+        subscriptions: "{{ subscriptions }}"
+        organization: "{{ organization }}"
+        state: present
+        server_url: "{{ url }}"
+        username: "{{ un }}"
+        password: "{{ pw }}"
+        validate_certs: "{{ validate }}"
+        content_overrides:
+        - label: "{{ item }}"
+          override: enabled
+      loop: "{{ repositories }}"

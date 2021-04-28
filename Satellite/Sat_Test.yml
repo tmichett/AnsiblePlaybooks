@@ -1,0 +1,11 @@
+- name: Test Satellite
+  hosts: localhost
+  tasks:
+    - name: create example.org domain
+      redhat.satellite.domain:
+        name: example.org
+        state: present
+        server_url: https://satellite.lab.example.com
+        username: admin
+        password: redhat
+        validate_certs: no
