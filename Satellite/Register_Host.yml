@@ -1,13 +1,13 @@
-- hosts: localhost
+- hosts: rhel83_test
   vars_files:
     - sat_vars.yml
   vars:
-    activation_key: OperationsServers
+    activation_key: rhhi-vm
     lifecycle_env: Library
-    organization: Operations
-    Sat_User_Name: Username
-    Sat_User_PW: Password
-    SatURL: https://satellite.lab.example.com
+    Organization_Name: MichetteTech
+    Sat_User_Name: sat_user_name
+    Sat_User_PW: sat_password
+    SatURL: https://sat6.michettetech.com
 
 
   tasks:
@@ -15,6 +15,7 @@
       get_url:
         url: "{{ SatURL }}/pub/katello-ca-consumer-latest.noarch.rpm"
         dest: /tmp/katello-latest.rpm
+        validate_certs: no
 
     - name: Install Katello rpm
       yum:
@@ -28,8 +29,13 @@
       redhat_subscription:
         state: present
         activationkey: "{{ activation_key }}"
-        org_id: "{{ organization }}"
+        org_id: "{{ Organization_Name }}"
+      when: activation_key is defined
 
+
+### It is best to use an activation key. Running auto-attach can be dangerous as
+### it will attach to any subscription that will work and it may not be the redhat_subscription
+### you would choose.
 
     - name: Register with UserName and Password
       redhat_subscription:
@@ -37,6 +43,6 @@
         username: "{{ Sat_User_Name }}"
         password: "{{ Sat_User_PW }}"
         environment: "{{ lifecycle_env }}"
-        org_id: "{{ organization }}"
+        org_id: "{{ Organization_Name }}"
         auto_attach: true
-      when: activation_key = empty
+      when: activation_key is not defined
