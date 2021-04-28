@@ -11,9 +11,32 @@
 
 
   tasks:
-    - name: Prepare System for Satellite Registration
+    - name: Prepare System for Satellite Registration - Get Cert
+      get_url:
+        url: "{{ SatURL }}/pub/katello-ca-consumer-latest.noarch.rpm"
+        dest: /tmp/katello-latest.rpm
+
+    - name: Install Katello rpm
+      yum:
+        name: /tmp/katello-latest.rpm
+        state: latest
+        disable_gpg_check: yes
+
 
 
     - name: Register with Activation key
+      redhat_subscription:
+        state: present
+        activationkey: "{{ activation_key }}"
+        org_id: "{{ organization }}"
+
 
     - name: Register with UserName and Password
+      redhat_subscription:
+        state: present
+        username: "{{ Sat_User_Name }}"
+        password: "{{ Sat_User_PW }}"
+        environment: "{{ lifecycle_env }}"
+        org_id: "{{ organization }}"
+        auto_attach: true
+      when: activation_key = empty
