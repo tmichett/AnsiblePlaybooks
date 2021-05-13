@@ -1,0 +1,145 @@
+---
+- name: Perform Operations to Sysprep and Seal a RHEL8 Virtual Machine
+  hosts: rhel83_test
+  vars:
+    - use_cloud_init: yes
+
+#############################################################################
+###                                                                       ###
+###    This will perform the VM Template sealing operation on RHEL8       ###
+###   systems. Sealing will not work correctly on RHV < 4.4 becuase       ###
+###   it is using RHEL 7.x virtualization hosts and not RHEL 8.x hosts    ###
+###         See: https://access.redhat.com/solutions/5793031              ###
+###                                                                       ###
+#############################################################################
+
+  tasks:
+
+  ## Install Cloud Init Packages if Using Cloud-INIT
+    - name: Install Cloud-Init Packages for use
+      yum:
+        name: cloud-init
+        state: latest
+      when: use_cloud_init == "yes" or use_cloud_init
+
+
+### Modified from original KB Solution
+### Need full network rto remove and unregister
+### Unregister System from Satellite or Red Hat
+    - name: Register with Activation key
+      redhat_subscription:
+          state: absent
+###
+### Cleanups of System Registration (fix later)
+###
+    - name: Remove all Subscriptions
+      shell: subscription-manager remove --all
+
+    - name: Clean all Subscriptions
+      shell: subscription-manager clean
+
+###
+###  End Cleanups of System Registration
+###
+
+  ## Fix Networking configuration files
+    - name: Identify IFCFG Files for fixing
+      find:
+        paths: /etc/sysconfig/network-scripts/
+        patterns: ifcfg-e*
+      register: ifcfg_results
+
+    - name: Remove HWADDR from the IFCFG Files
+      lineinfile:
+        path: "{{item['path'] }}"
+        regexp: '^HWADDR='
+        state: absent
+      with_items:
+        - "{{ ifcfg_results['files'] }}"
+
+    - name: Remove UUID from the IFCFG Files
+      lineinfile:
+        path: "{{item['path'] }}"
+        regexp: '^UUID='
+        state: absent
+      with_items:
+        - "{{ ifcfg_results['files'] }}"
+
+  ## Fix DNS and Network Settings
+    - name: Remove /etc/resolv.conf
+      file:
+        name: /etc/resolv.conf
+        state: absent
+
+    - name: Make /etc/hosts file generic to remove configurations
+      copy:
+        content: |
+          127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+          ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+        dest: /etc/hosts
+        force: yes
+
+
+### Remove MAC Addresses and Interface Name Associations
+    - name: Identify 70-persistent-* for fixing
+      find:
+        paths: /etc/udev/rules.d/
+        patterns: 70-persistent-*
+      register: mac_udev_results
+
+    - name: Remove 70-persistent-* rules
+      file:
+        name: "{{item['path'] }}"
+        state: absent
+      with_items:
+        - "{{ mac_udev_results['files'] }}"
+
+
+### Set Hostname to Generic localhost.localdomain
+    - name: Set hostname to generic hostname
+      hostname:
+        name: localhost.localdomain
+
+### Remove SSH Keys
+    - name: Find SSH Keys
+      find:
+        paths: /etc/ssh/
+        patterns: ssh_host_*
+      register: ssh_key_results
+
+    - name: Remove SSH Keys
+      file:
+        name: "{{item['path'] }}"
+        state: absent
+      with_items:
+        - "{{ ssh_key_results['files'] }}"
+
+#    - name: Pause the System for a break
+#      pause:
+#        minutes: 10
+
+### Remove Machine ID
+    - name: Remove Machine ID
+      copy:
+        content: uninitialized
+        dest: /etc/machine-id
+        force: yes
+
+### Remove Katello Facts
+    - name: Remove Katello Facts
+      file:
+        name: /etc/rhsm/facts/katello.facts
+        state: absent
+
+### Remove iSCSI Initiator Utils
+    - name: Remove iSCSI Initiator Utils
+      file:
+        name: /etc/iscsi/initiatorname.iscsi
+        state: absent
+
+
+### Power Off VM
+### There is a community collections shutdown module that can be used as
+### well as others. This is easiest way and most likely what people normally see in docs.
+    - name: Shutdown System
+      shell: poweroff
