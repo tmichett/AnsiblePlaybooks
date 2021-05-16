@@ -1,0 +1,22 @@
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:status:
+:outfilesuffix: .adoc
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+:pygments-style: tango
+:source-highlighter: pygments
+:imagesdir: images/
+
+
+= Using Ansible with Containers
+
+The items within this directory and its sub-directories will provide examples on how to use Ansible modules (specifically the modules from *Podman* collections) to manage and create containers.
+
+== Using Collections
+
+In order to use the *Podman* collections, you must have Ansible 2.9 or greater and have the collections installed. the Ansible Collections tutorial here.

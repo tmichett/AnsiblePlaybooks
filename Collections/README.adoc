@@ -1,0 +1,36 @@
+= {subject}
+:subject: Ansible Collections
+:description:  Using Ansible Collections in Playbooks
+Travis Michette <tmichett@redhat.com>
+:doctype: book
+:customer:  GLS
+:listing-caption: Listing
+:toc:
+:toclevels: 7
+:sectnums:
+:sectnumlevels: 6
+:numbered:
+:chapter-label:
+:pdf-page-size: LETTER
+:icons: font
+ifdef::backend-pdf[]
+:title-page-background-image: image:EngagementJournalCoverPageLogoNew.jpg[pdfwidth=8.0in,align=center]
+:pygments-style: tango
+:source-highlighter: pygments
+endif::[]
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:status:
+:outfilesuffix: .adoc
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+:revnumber: 1.0
+:imagesdir: images/
+
+= Ansible Collections
+
+== How to Use Ansible Collections
