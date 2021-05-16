@@ -1,0 +1,11 @@
+---
+- name: Deploy Quay after Quay_Prepare.yml Playbook
+  hosts: quay
+  vars:
+    QUAY_DIR: /quay
+  vars_files:
+    - registry_login.yml
+  collections:
+    - containers.podman
+
+### Tasks for this playbook will setup a Quay Container Registry

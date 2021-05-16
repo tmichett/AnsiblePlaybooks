@@ -20,3 +20,202 @@ The items within this directory and its sub-directories will provide examples on
 == Using Collections
 
 In order to use the *Podman* collections, you must have Ansible 2.9 or greater and have the collections installed. the Ansible Collections tutorial here.
+
+link:https://github.com/tmichett/AnsiblePlaybooks/tree/master/Collections[Using Ansible Collections]
+
+
+=== Using the *containers.podman* Collection
+
+For simplicity and to make the playbooks easier to follow and design, we will be defining the collections at the top of the playbooks similar to roles so that we can leverage the collection modules by the shorter names. By defining the collections, it is not necessary to use the collection and module name space and you can instead utilize the module name when creating the playbook and defining tasks.
+
+.Collections Module Usage Examples
+====
+
+.Shorter Name Module Reference
+[source,yaml]
+----
+---
+- name: Deploy Quay after Quay_Prepare.yml Playbook
+  hosts: quay
+  vars:
+    QUAY_DIR: /quay
+  vars_files:
+    - registry_login.yml
+
+  tasks:
+  ## Start and Run the Quay Container
+    - name: Start the Quay Container
+      containers.podman.podman_container:
+        name: quay
+        image: registry.redhat.io/quay/quay-rhel8:v3.5.1
+        state: started
+        restart: yes
+        ports:
+          - "8080:8080"
+        volume:
+          - "{{ QUAY_DIR }}/config:/conf/stack:Z"
+          - "{{ QUAY_DIR }}/storage:/datastorage:Z"
+
+----
+
+
+
+It is possible to define the collections allowing a user to use the module name (instead of the collection+module name format). This is done with a *collections* definition at the top of the playbook as seen in the example below.
+
+.Shorter Name Module Reference
+[source,yaml]
+----
+---
+- name: Deploy Quay after Quay_Prepare.yml Playbook
+  hosts: quay
+  vars:
+    QUAY_DIR: /quay
+  vars_files:
+    - registry_login.yml
+  collections:
+    - containers.podman
+
+  tasks:
+  ## Start and Run the Quay Container
+    - name: Start the Quay Container
+      podman_container:
+        name: quay
+        image: registry.redhat.io/quay/quay-rhel8:v3.5.1
+        state: started
+        restart: yes
+        ports:
+          - "8080:8080"
+        volume:
+          - "{{ QUAY_DIR }}/config:/conf/stack:Z"
+          - "{{ QUAY_DIR }}/storage:/datastorage:Z"
+
+----
+
+[TIP]
+=====
+There is a slight difference in usage in the above tasks snippets and playbooks. The difference focuses on collections and whether a collection namespace is defined.
+
+.Defining Collection Namespaces
+[source,yaml]
+----
+collections:
+  - containers.podman
+----
+
+.Using Collection Module with Collection Namespace Defined in Playbook
+[source,yaml]
+----
+- name: Start the Quay Container
+  podman_container:
+    name: quay
+----
+
+
+.Using Collection Module without Collection Namespace Defined in Playbook
+[source,yaml]
+----
+- name: Start the Quay Container
+  containers.podman.podman_container:
+    name: quay
+----
+
+By not defining collection namespaces, it is necessary to provide the complete namespace and module for each task within a playbook. This decreases the readability of the playbook and make the creation of the playbook harder since there is more to type. By defining collections being used at the top of the playbook, it prevents the need for the collection namespace and module from being used for each task within the play.
+=====
+
+====
+
+==== Logging into Container Registries
+
+In order to use most container images, the will be coming from remote registries. The *Podman* collection provides a module to allow you to login and interact with container registries. The module is *podman_login*. It requires three parameters and it is suggested to place these in a variables file that will most likely be protected by Ansible Vault since you will have Username/Password combinations in there.
+
+The *podman_login* requires essentially three components:
+
+* *Registry Username*: Login name to authenticate to a registry
+* *Registry Password*: Password used with the username to authenticate to the registry
+* *Registry URL*: URL of the registry that you will be using to authenticate to as well as download/upload container images.
+
+
+.Registry Login Variables
+[source,yaml]
+----
+registry_un: UN_Goes_Here
+registry_pass: Password_Goes_Here
+registry_url: registry.redhat.io
+----
+
+.Registry Login Task
+[source,yaml]
+----
+  ## Podman Collections Needed for Login
+      - name: Login to Container Registry
+        podman_login:
+          username: "{{ registry_un }}"
+          password: "{{ registry_pass }}"
+          registry: "{{ registry_url }}"
+----
+
+
+==== Launching and Stopping Containers from Images
+
+The *Podman* collection provides a module to allow you to launch/stop/control container images. The *podman_container* module is responsible for most of the interaction with a container and a container image. This module allows launching, stopping, removing, and managing of containers. If a new container image is needed, provided you have access to the container image registry, this will also download the specified image allowing the container to run.
+
+[NOTE]
+====
+Information about the *podman_container* module can be found here. https://docs.ansible.com/ansible/latest/collections/containers/podman/podman_container_module.html.
+====
+
+.Launching Containers from Images
+
+There are a few minimum requirements for launching containers with this module. In order to use *podman_container*, the following items are required to launch a container:
+
+.*podman_container* Required Components for Running a Container
+
+* *image*: Defining the image to be used for the container. Generally, this will also include the repository.
+
+* *name*: Name of the container. Container names aren't generally required, but in order to properly manage containers with this module, the playbooks will reference containers by name.
+
+* *State*: While not specifically required, this should be specified to define the state of the container. In this instance, we want the state to be *started* which is also the default if the state isn't specified.
+
+.*podman_container* Optional Components
+
+* *env*: Environment variables. Often required for container images and generally passed to the container with the podman command when launching on the command line.
+
+* *ports*: Used for port forward mapping. This allows ports within the running container to be exposed. This is the same as passing the *-p localhost_port:container_port* on the command line.
+
+* *volume*: Used to mount persistent storage from the node running the container. This is the same as passing the *-v localhost_mountpoint:container_mountpoint:Z* on the command line.
+
+.Launching a Container Example
+[source,yaml]
+----
+  ## Start and Run the Redis Container
+      - name: Start the Redis Container
+        podman_container:
+          name: redis
+          image: registry.redhat.io/rhel8/redis-5:1
+          state: started
+          restart: yes
+          ports:
+            - "6379:6379"
+          env:
+            REDIS_PASSWORD: "{{ redis_pass }}"
+----
+
+.Stopping Running Containers
+
+There are a few minimum requirements for stopping containers with this module. In order to use *podman_container*, the following items are required to stop a container:
+
+.*podman_container* Required Components for Stopping a Container
+
+* *name*: Name of container to stop
+* *state*: Must be specified with either *stopped* or *absent*. If *absent* is specified, the container will be stopped an removed.
+
+.Stopping and Removing a Container Example
+[source,yaml]
+----
+  ## Stop Quay Config Container
+      - name: Stop and Remove the Quay Config Container
+        podman_container:
+          name: quay_config
+          state: absent       ### Can use "stopped" to just stop the container
+
+----
