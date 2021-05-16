@@ -1,11 +1,79 @@
 ---
-- name: Deploy Quay after Quay_Prepare.yml Playbook
+- name: Deploy HTTPD Server Demo
   hosts: quay
-  vars:
-    QUAY_DIR: /quay
   vars_files:
-    - registry_login.yml
+    - vars/registry_login.yml
   collections:
     - containers.podman
 
 ### Tasks for this playbook will setup a Quay Container Registry
+
+
+  tasks:
+
+## Prepare Config Folder
+    - name: Prepare Config Folder for Persistent Storage
+      file:
+        path: "/Webhosting"
+        state: directory
+        mode: '0755'
+
+## Create Index.html File
+    - name: Create website file
+      copy:
+        content: Welcome to my demo website. This was deployed with Ansible and Podman running in a container!!!
+        dest: /Webhosting/index.html
+
+## Set permissions - cheating with shell to follow demo from OCP DO180 Course
+    - name: Set permissions on directory and files
+      shell: chown -R 48:48 /Webhosting
+
+## Set SELinux Contexts - cheating with shell to follow demo from OCP DO180 Course
+    - name: Set SELinux Type on directory and files
+      shell: semanage fcontext -a -t container_file_t '/Webhosting(/.*)?'
+      ignore_errors: yes  ### Done because this isn't idempotent and will erorr when playbook executed multiple times
+
+## Restore SELinux Contexts - cheating with shell to follow demo from OCP DO180 Course
+    - name: Restore SELinux Contexts
+      shell: restorecon -Rv /Webhosting/
+
+## Podman Collections Needed for Login
+    - name: Login to Container Registry
+      podman_login:
+        username: "{{ registry_un }}"
+        password: "{{ registry_pass }}"
+        registry: "{{ registry_url }}"
+
+## Start and Run the HTTPD Container
+    - name: Start the Quay Container
+      podman_container:
+        name: Website_Demo
+        image: quay.io/redhattraining/httpd-parent:2.4
+        state: started
+        restart: yes
+        ports:
+          - "7080:80"
+        volume:
+          - "/Webhosting:/var/www/html:Z"
+
+## Open Firewall for Automated Testing
+    - name: Open Firewall for Website
+      firewalld:
+        port: 7080/tcp
+        permanent: true
+        state: enabled
+        immediate: yes
+
+- name: Test Website
+  hosts: localhost
+  tasks:
+    - name: Test Website
+      uri:
+        url: http://quay.michettetech.com:7080
+        return_content: yes
+        status_code: 200
+      register: result
+
+    - name: Test Website Output
+      debug:
+        msg: 'The website returned: "{{ result.content }}"'

@@ -23,6 +23,12 @@ In order to use the *Podman* collections, you must have Ansible 2.9 or greater a
 
 link:https://github.com/tmichett/AnsiblePlaybooks/tree/master/Collections[Using Ansible Collections]
 
+.Installing Collections
+[source,yaml]
+----
+ansible-galaxy collection install -r collections/requirements.yml -p ./collections
+----
+
 
 === Using the *containers.podman* Collection
 
@@ -164,7 +170,7 @@ The *Podman* collection provides a module to allow you to launch/stop/control co
 Information about the *podman_container* module can be found here. https://docs.ansible.com/ansible/latest/collections/containers/podman/podman_container_module.html.
 ====
 
-.Launching Containers from Images
+===== Launching Containers from Images
 
 There are a few minimum requirements for launching containers with this module. In order to use *podman_container*, the following items are required to launch a container:
 
@@ -200,7 +206,7 @@ There are a few minimum requirements for launching containers with this module. 
             REDIS_PASSWORD: "{{ redis_pass }}"
 ----
 
-.Stopping Running Containers
+===== Stopping Running Containers
 
 There are a few minimum requirements for stopping containers with this module. In order to use *podman_container*, the following items are required to stop a container:
 
