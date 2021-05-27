@@ -1,6 +1,6 @@
 ---
-- name: Create a Network Team Device on ServerB 
-  hosts: localhost 
+- name: Create a Network Team Device on ServerB
+  hosts: localhost
   vars:
     nic1: ens9
     nic2: ens11
