@@ -1,0 +1,16 @@
+
+
+
+.Modules and Locations
+
+https://access.redhat.com/solutions/5295121
+
+
+Where did modules go?
+
+https://github.com/ansible/ansible/blob/devel/lib/ansible/config/ansible_builtin_runtime.yml
+
+
+.Ansible 3.0 Q & A
+
+https://www.ansible.com/blog/ansible-3.0.0-qa 
