@@ -1,3 +1,8 @@
 servera.lab.example.com
 serverb.lab.example.com
 rhel83_test
+
+[RHVH]
+smicro1
+smicro2
+smicro3

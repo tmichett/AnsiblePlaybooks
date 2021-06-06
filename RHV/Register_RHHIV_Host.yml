@@ -1,0 +1,60 @@
+- hosts: RHVH
+  vars:
+    activation_key: RHV44
+    lifecycle_env: Library
+    Organization_Name: MichetteTech
+    Sat_User_Name: sat_user_name
+    Sat_User_PW: sat_password
+    SatURL: https://sat6.michettetech.com
+
+
+  tasks:
+    - name: Prepare System for Satellite Registration - Get Cert
+      get_url:
+        url: "{{ SatURL }}/pub/katello-ca-consumer-latest.noarch.rpm"
+        dest: /tmp/katello-latest.rpm
+        validate_certs: no
+
+    - name: Install Katello rpm
+      yum:
+        name: /tmp/katello-latest.rpm
+        state: latest
+        disable_gpg_check: yes
+
+
+
+    - name: Register with Activation key
+      redhat_subscription:
+        state: present
+        activationkey: "{{ activation_key }}"
+        org_id: "{{ Organization_Name }}"
+      when: activation_key is defined
+
+
+### It is best to use an activation key. Running auto-attach can be dangerous as
+### it will attach to any subscription that will work and it may not be the redhat_subscription
+### you would choose.
+
+    - name: Register with UserName and Password
+      redhat_subscription:
+        state: present
+        username: "{{ Sat_User_Name }}"
+        password: "{{ Sat_User_PW }}"
+        environment: "{{ lifecycle_env }}"
+        org_id: "{{ Organization_Name }}"
+        auto_attach: true
+      when: activation_key is not defined
+
+### Update to latest Hypervisor Package
+
+    - name: Upgrade RHV Hypervisors
+      yum:
+        name: '*'
+        state: latest
+      notify: Reboot RHV Hypervisors
+
+  handlers:
+### Update to latest Hypervisor Package
+    - name: Reboot RHV Hypervisors
+      reboot:
+        reboot_timeout: 300
