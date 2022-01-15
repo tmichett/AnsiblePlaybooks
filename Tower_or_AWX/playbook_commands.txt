@@ -1,0 +1,11 @@
+
+## Correct Directory
+cd /home/student/Github/AAP_Webinar/Future/Setup
+
+## Simple Command to Install Collections
+
+ansible-galaxy collection install -r collections/requirements.yml -p collections/
+
+## Run playbook
+
+ansible-playbook Setup_Controller.yml
