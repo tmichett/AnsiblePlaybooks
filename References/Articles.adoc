@@ -1,0 +1,7 @@
+= References and Articles
+
+* *5 ways to make your Ansible modules work faster*
+** https://www.redhat.com/sysadmin/faster-ansible-modules
+
+* *8 ways to speed up your Ansible playbooks*
+** https://www.redhat.com/sysadmin/faster-ansible-playbook-execution
