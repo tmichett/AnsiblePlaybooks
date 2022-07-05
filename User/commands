@@ -1,3 +1,7 @@
 [student@workstation S1]$ ansible-playbook user_setup.yml -b
 
 [student@workstation S1]$ ssh travis@serverf -o PubKeyAuthentication=no
+
+### Testing and forcing password and ignoring keys
+
+[student@workstation User]$ ssh travis@servere -o PreferredAuthentications=password -o PubkeyAuthentication=no
