@@ -19,3 +19,14 @@ Workshop Exercise - The Ansible Basics - https://aap2.demoredhat.com/exercises/a
 https://github.com/ansible/workshops/tree/devel/exercises/ansible_windows/8-chocolatey
 
 https://github.com/ansible/workshops
+
+
+Using Ansible in RHEL 9 - https://access.redhat.com/articles/6393321
+
+Ansible and Windows
+
+https://www.ansible.com/for/windows
+
+https://docs.ansible.com/ansible/latest/os_guide/windows_winrm.html#winrm-authentication-options
+
+https://github.com/diyan/pywinrm
