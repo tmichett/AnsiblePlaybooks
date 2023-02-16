@@ -1,0 +1,6 @@
+- name: Test Callback
+  hosts: localhost
+  tasks:
+    - name: Initialize Callback timer
+      ansible.posix.timer:
+
