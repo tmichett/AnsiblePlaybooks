@@ -1,0 +1,26 @@
+- hosts: localhost
+  tasks:
+    - name: Load nbd kernel module
+      community.general.modprobe:
+        name: nbd
+        state: present
+    - name: Connect qcow image as block device
+      command: qemu-nbd -c /dev/nbd0 /content/rhel9.0/x86_64/vms/rh294-bastion-vda.qcow2
+    - name: Mount qcow file system
+      ansible.posix.mount:
+        path: /mnt
+        src: /dev/nbd0p4
+        fstype: xfs
+        state: mounted
+    - name: Cat data from file
+      command: cat /mnt/etc/rht
+      register: file_data
+    - name: Display file data
+      debug:
+        var: file_data.stdout
+    - name: Unmount qcow file system
+      ansible.posix.mount:
+        path: /mnt
+        state: unmounted
+    - name: Disconnect qcow image from block device
+      command: qemu-nbd -d /dev/nbd0

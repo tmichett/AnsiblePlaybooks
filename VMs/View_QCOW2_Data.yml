@@ -1,0 +1,17 @@
+- hosts: localhost
+  tasks:
+    - name: Mount qcow image
+      community.general.qemu_img:
+        state: mounted
+        image: /content/rhel9.0/x86_64/vms/rh294-bastion-vda.qcow2
+        target: /mnt
+    - name: Cat data from file
+      command: cat /mnt/etc/rht
+      register: file_data
+    - name: Display file data
+      debug:
+        var: file_data.stdout
+    - name: Unmount qcow image
+      community.general.qemu_img:
+        state: unmounted
+        target: /mnt
