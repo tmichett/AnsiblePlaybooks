@@ -1,0 +1,20 @@
+- hosts: localhost
+
+  vars:
+    ipa_admin: admin
+    ipa_server: idm.lab.example.net
+    ipa_admin_password: RedHat123^
+
+  tasks:
+    - name: Create IdM User Group
+      ipa_group:
+        name: demo_users
+        state: present
+        user:
+          - travis
+        ipa_host: "{{ ipa_server  }}"
+        ipa_user: "{{ ipa_admin  }}"
+        ipa_pass: "{{ ipa_admin_password  }}"
+        validate_certs: false
+
+  
