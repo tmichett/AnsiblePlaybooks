@@ -1,0 +1,8 @@
+# Comment out if not modifying localhost
+#localhost ansible_connection=local
+
+# Can list machines to modify by hostname or IP address below
+utility.lab.example.com
+workstation.lab.example.com
+idm.lab.example.com
+
