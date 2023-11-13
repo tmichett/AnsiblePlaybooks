@@ -2,6 +2,8 @@
 - name: Test Callback
   hosts: localhost
   tasks:
-    - debug:
+   - debug:
         msg: This is a test
-
+   - name: Pause for 5 minutes
+     ansible.builtin.pause:
+       minutes: 5

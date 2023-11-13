@@ -1,0 +1,20 @@
+---
+- name: Capture system information
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Get hostname
+      set_fact:
+        inventory_hostname_only: "{{ inventory_hostname.split('.')[0] }}"
+
+    - name: Create system information directory
+      file:
+        path: "/tmp/system-info"
+        state: directory
+      become: yes
+
+    - name: Capture hostname, kernel version, and installed packages
+      command: "echo 'Hostname: {{ inventory_hostname }}' > /tmp/system-info/{{ inventory_hostname_only }}.txt && echo 'Kernel Version: {{ ansible_kernel }}' >> /tmp/system-info/{{ inventory_hostname_only }}.txt && echo 'Installed Packages:' >> /tmp/system-info/{{ inventory_hostname_only }}.txt && rpm -qa | sort >> /tmp/system-info/{{ inventory_hostname_only }}.txt"
+      become: yes
+

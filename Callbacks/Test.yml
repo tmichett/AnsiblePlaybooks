@@ -1,0 +1,8 @@
+- name: Gather performance statistics for control group
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Gather performance statistics
+      ansible.posix.cgroup_perf_recap:
+        name: my_cgroup
+      register: cgroup_perf_stats

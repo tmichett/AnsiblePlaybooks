@@ -1,0 +1,13 @@
+---
+- name: Playbook to Demo Ansible Navigator Containers
+  hosts: workstation
+  tasks:
+
+    - name: Display message to screen
+      ansible.builtin.debug:
+        msg: Hello, I'm waiting on a file on Workstation /tmp/navdemo. I will continue waiting until the file exists. Open a new terminal, use PODMAN to go into the container and then create the file /tmp/navdemo with contents 'DEMO COMPLETE'.
+
+    - name: Wait until the string "DEMO COMPLETE" is in the file /tmp/foo before continuing
+      ansible.builtin.wait_for:
+        path: /tmp/navdemo
+        search_regex: DEMO COMPLETE
