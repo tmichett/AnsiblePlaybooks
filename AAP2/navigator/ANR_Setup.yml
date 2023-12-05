@@ -1,0 +1,13 @@
+---
+- name: Playbook to configure BASH
+  hosts: workstation
+  remote_user: student
+  tasks:
+    - name: Setup Bash Alias
+      ansible.builtin.blockinfile:
+        path: /home/student/.bashrc
+        block: |
+          alias anr="ansible-navigator run"
+          alias and="ansible-navigator doc"
+          alias ani="ansible-navigator inventory"
+          alias anc="ansible-navigator config"  
