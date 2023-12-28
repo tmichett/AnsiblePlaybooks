@@ -1,3 +1,6 @@
+[demo]
+192.168.15.123
+
 [webservers]
 server[a:d].lab.example.com
 

@@ -1,0 +1,25 @@
+---
+- name: Show packages
+  hosts: demo
+  vars:
+    my_pkg: vim-common
+  tasks:
+
+    - name: Gather Package Facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Show package facts
+      ansible.builtin.debug:
+        var: ansible_facts['packages']
+
+    - name: Show package facts for "my_pkg"
+      ansible.builtin.debug:
+        var: ansible_facts['packages'][my_pkg]
+      when: my_pkg in ansible_facts['packages']
+
+    - name: Show package version for "my_pkg"
+      ansible.builtin.debug:
+        var: ansible_facts['packages'][my_pkg][0]['version']
+      when: my_pkg in ansible_facts['packages']
+
