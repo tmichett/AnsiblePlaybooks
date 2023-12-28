@@ -23,8 +23,22 @@
         var: ansible_facts['packages'][my_pkg][0]['version']
       when: my_pkg in ansible_facts['packages']
 
-#    - name: Loop over packages and display name and version
-#      ansible.builtin.debug:
-#        var: item
-#      loop: "{{ ansible_facts['packages']  }}"
+    - name: Setting a Fact
+      ansible.builtin.set_fact:
+        package_info: "{{ ansible_facts['packages']  }}"
 
+    - name: Show package info from registered variable
+      ansible.builtin.debug:
+        var: package_info
+
+    - name: Loop over packages and display name and version
+      ansible.builtin.debug:
+        msg: The package is {{ item }} and the version is {{ ansible_facts['packages'][item][0]['version'] }}
+      loop: "{{ package_info | list }}"
+
+
+    - name: Loop over packages and display name and version
+      ansible.builtin.debug:
+        msg: The package is {{ item }} and the version is {{ ansible_facts['packages'][item][0]['version'] }}
+      loop: "{{ package_info | list }}"
+      when: my_pkg in item
