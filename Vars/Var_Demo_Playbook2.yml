@@ -1,0 +1,63 @@
+---
+- name: Demonstrate Variables and Type
+  hosts: localhost
+  vars:
+    - my_var: This is a test
+    - user_list:
+        - user1
+        - user2
+        - user3
+    - user_dict:
+        username: travis
+        uid: 1001
+        group: admins
+
+  tasks:
+
+# Print values of variable (raw) using Debug 
+
+    - name: Print value of My_Var
+      ansible.builtin.debug:
+        var: my_var
+
+    - name: Print value of user_list
+      ansible.builtin.debug:
+        var: user_list
+
+    - name: Print value of user_dict
+      ansible.builtin.debug:
+        var: user_dict
+
+## Prints all hostvars for [inventory_hostname]
+    - name: Print value of inventory_hostname (hostvars)
+      ansible.builtin.debug:
+        var: hostvars[inventory_hostname]
+
+## Prints single hostvars for [inventory_hostname] for the value of 'inventory_hostname'
+    - name: Print value of inventory_hostname (hostvars)
+      ansible.builtin.debug:
+        var: hostvars[inventory_hostname]['inventory_hostname']
+
+
+#### Print variable Types 
+
+    - name: Print value of My_Var (variable type)
+      ansible.builtin.debug:
+        var: my_var | type_debug
+
+    - name: Print value of user_list (variable type)
+      ansible.builtin.debug:
+        var: user_list | type_debug
+
+    - name: Print value of user_dict (variable type)
+      ansible.builtin.debug:
+        var: user_dict | type_debug
+
+    - name: Print value of inventory_hostname (variable type)
+      ansible.builtin.debug:
+        var: hostvars[inventory_hostname] | type_debug
+
+## Prints single hostvars for [inventory_hostname] for the value of 'inventory_hostname' (variable_type)
+    - name: Print value of inventory_hostname (hostvars)
+      ansible.builtin.debug:
+        var: hostvars[inventory_hostname]['inventory_hostname'] | type_debug
