@@ -1,0 +1,12 @@
+---
+- name: win_chocolatey module install
+  hosts: windows
+  become: false
+  gather_facts: false
+  tasks:
+
+    - name: Installing Acrobat Reader
+      chocolatey.chocolatey.win_chocolatey:
+        name: adobereader
+        state: present
+

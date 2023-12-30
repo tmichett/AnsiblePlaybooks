@@ -1,0 +1,5 @@
+2023-07-06T16:45:58.274902+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2023-07-06T16:45:58.275352+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: []
+
+2023-07-06T16:45:58.275473+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: error inspecting object: quay.io/tmichett/travis_do374:1.1: image not known
+

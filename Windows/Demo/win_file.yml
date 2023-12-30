@@ -1,0 +1,21 @@
+---
+- name: win_file module demo
+  hosts: windows
+  become: false
+  gather_facts: false
+  tasks:
+
+## IMPORTANT NOTE *********
+## Files removed/deleted with Ansible do not appear in the Windows recycle bin.
+
+    - name: Removing Created File 
+      ansible.windows.win_file:
+        path: C:\Test_Content.txt
+        state: absent
+
+    - name: Removing Copied File 
+      ansible.windows.win_file:
+        path: C:\Windows_Copy_Demo.txt
+        state: absent
+
+

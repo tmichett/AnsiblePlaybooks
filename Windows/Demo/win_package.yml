@@ -1,0 +1,19 @@
+---
+- name: win_package module install demo
+  hosts: windows
+  #become: true
+  #become_method: runas
+
+## NOTE ****
+## The user is already in adminstrator group so it can elevate privs when needed
+## Will need to use the above commented out items as well as specifying user and other items.   
+## SEE: https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_package_module.html 
+
+
+  gather_facts: false
+  tasks:
+
+    - name: Install Putty
+      ansible.windows.win_package:
+        path: https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.78-installer.msi
+        state: present

@@ -1,0 +1,12 @@
+---
+- name: win_chocolatey module install
+  hosts: windows
+  become: false
+  gather_facts: false
+  tasks:
+
+    - name: Installing Chocolatey for Windows
+      chocolatey.chocolatey.win_chocolatey:
+        name: chocolatey
+        state: present
+

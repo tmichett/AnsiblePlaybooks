@@ -1,0 +1,15 @@
+---
+- name: win_copy module demo
+  hosts: windows
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Implement Copying of Content Creating a File
+      ansible.windows.win_copy:
+        content: This is a test message creasted by Ansible. 
+        dest: C:\Test_Content.txt
+
+    - name: Implement Copying a File
+      ansible.windows.win_copy:
+        src: Files/Windows_Copy_Demo.txt
+        dest: C:\Windows_Copy_Demo.txt
