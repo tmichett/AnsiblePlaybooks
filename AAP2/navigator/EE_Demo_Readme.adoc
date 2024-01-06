@@ -1,0 +1,128 @@
+= Using Execution Environments and Exploring the EEI
+
+.Access the Container
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec -it -- /bin/bash
+----
+
+.View Contents of EE and EEI
+[source,bash]
+----
+bash-4.4# ansible-galaxy collection list
+
+# /usr/share/ansible/collections/ansible_collections
+Collection              Version
+----------------------- -------
+amazon.aws              3.2.0
+ansible.controller      4.2.1
+
+... OUTPUT OMITTED ...
+
+trendmicro.deepsec      2.0.0
+vmware.vmware_rest      2.1.5
+vyos.vyos               3.0.0
+----
++
+[source,bash]
+----
+bash-4.4# ansible-galaxy role list
+# /usr/share/ansible/roles
+# /etc/ansible/roles
+[WARNING]: - the configured path /home/runner/.ansible/roles does not exist.
+----
++
+[IMPORTANT]
+=====
+*NOTE*: Once a command has been run within a container, upon completion the *exec* session will execute the remaining functions of *ansible-navigator* which will cause the container and the ephemeral storage to be cleaned up.
+=====
++
+[TIP]
+=====
+It is possible to use the Podman to keep a longer session open within the container.
+
+----
+[student@workstation navigator]$ podman run -it --name navigator --rm utility.lab.example.com/ee-supported-rhel8:latest /bin/bash
+
+bash-4.4#
+
+bash-4.4# ansible --version
+ansible [core 2.13.3]
+  config file = /etc/ansible/ansible.cfg
+
+... OUTPUT OMITTED ...
+
+  libyaml = True
+
+bash-4.4#
+----
+
+The *podman run* command will create a container named *navigator* and will remove the container when you exit the BASH prompt. If you want the container to remain, don't put in the *--rm* in the command line.
+
+=====
+
+== Ansible AD-HOC Commands
+
+Ansible *ad-hoc* commands can be executed using the *ansible-navigator* command and the execution environments. It is possible to use this process to perform the same *ansible* commands.
+
+.Testing SSH Keys and Communication
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec -- ansible all -m ansible.builtin.ping
+
+serverd.lab.example.com | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+...
+
+workstation | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+----
+
+.Testing SUDOERS File with No Password
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec -- ansible all -m ansible.builtin.ping --become
+----
++
+.Using *--become*
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec -- ansible all -m ansible.builtin.command -a 'whoami' --become
+serverd.lab.example.com | CHANGED | rc=0 >>
+root
+serverb.lab.example.com | CHANGED | rc=0 >>
+root
+servera.lab.example.com | CHANGED | rc=0 >>
+root
+serverc.lab.example.com | CHANGED | rc=0 >>
+root
+workstation | CHANGED | rc=0 >>
+root
+----
++
+.Not Using *--become*
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec -- ansible all -m ansible.builtin.command -a 'whoami'
+servera.lab.example.com | CHANGED | rc=0 >>
+devops
+serverc.lab.example.com | CHANGED | rc=0 >>
+devops
+serverd.lab.example.com | CHANGED | rc=0 >>
+devops
+serverb.lab.example.com | CHANGED | rc=0 >>
+devops
+workstation | CHANGED | rc=0 >>
+devops
+----
