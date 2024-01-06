@@ -30,3 +30,7 @@ https://www.ansible.com/for/windows
 https://docs.ansible.com/ansible/latest/os_guide/windows_winrm.html#winrm-authentication-options
 
 https://github.com/diyan/pywinrm
+
+**VS Code Extensions**
+
+https://www.ansible.com/blog/deep-dive-on-ansible-vscode-extension

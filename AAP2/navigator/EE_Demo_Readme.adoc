@@ -246,10 +246,45 @@ Github	ansible-navigator.log
 .Viewing Mounted Filesystems and Adding Additional Mounts
 [source,bash]
 ----
-[student@workstation navigator]$ export ANSIBLE_NAVIGATOR_EXECUTION_ENVIRONMENT_VOLUME_MOUNTS=/home/student:/tmp\;/home/student/Github:/mnt
+[student@workstation navigator]$ export ANSIBLE_NAVIGATOR_EXECUTION_ENVIRONMENT_VOLUME_MOUNTS=/home/student/Github:/mnt
 
+[student@workstation navigator]$ ansible-navigator exec -- df -h
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          20G  6.7G   13G  35% /
+/dev/vda4        20G  6.7G   13G  35% /mnt <1>
+tmpfs            64M     0   64M   0% /dev
+tmpfs           2.8G   84K  2.8G   1% /dev/shm
+devtmpfs        2.8G     0  2.8G   0% /dev/tty
 
 ----
+<1> The additional mounted directory comes from the *ANSIBLE_NAVIGATOR_EXECUTION_ENVIRONMENT_VOLUME_MOUNTS* and is mounted as a disk to the specified mount point. The projects *CWD* is mounted automatically as the overlay filesystem to */*.
+
+It is possible to have multiple mount points and not needing the *ANSIBLE_NAVIGATOR_EXECUTION_ENVIRONMENT_VOLUME_MOUNTS* variable to be set. This can be done by modifying the *ansible-navigator.yml* file.
+
+.*ansible-navigator.yml* with Mount Points
+[source,bash]
+----
+---
+ansible-navigator:
+  ansible:
+    config:
+      path: ./ansible.cfg
+  execution-environment:
+    image: utility.lab.example.com/ee-supported-rhel8:latest
+    pull:
+      policy: missing
+    volume-mounts:
+      - src: "/home/student/Github"
+        dest: "/mnt"
+        options: "Z"
+
+      - src: "/home/student"
+        dest: "/tmp"
+        options: "Z"
+
+... OUTPUT OMITTED ...
+----
+
 
 == References
 
