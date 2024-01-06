@@ -23,7 +23,7 @@ trendmicro.deepsec      2.0.0
 vmware.vmware_rest      2.1.5
 vyos.vyos               3.0.0
 ----
-+
+
 [source,bash]
 ----
 bash-4.4# ansible-galaxy role list
@@ -31,12 +31,12 @@ bash-4.4# ansible-galaxy role list
 # /etc/ansible/roles
 [WARNING]: - the configured path /home/runner/.ansible/roles does not exist.
 ----
-+
+
 [IMPORTANT]
 =====
 *NOTE*: Once a command has been run within a container, upon completion the *exec* session will execute the remaining functions of *ansible-navigator* which will cause the container and the ephemeral storage to be cleaned up.
 =====
-+
+
 [TIP]
 =====
 It is possible to use the Podman to keep a longer session open within the container.
@@ -110,7 +110,7 @@ root
 workstation | CHANGED | rc=0 >>
 root
 ----
-+
+
 .Not Using *--become*
 [source,bash]
 ----
