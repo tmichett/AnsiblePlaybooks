@@ -1,6 +1,6 @@
 = {subject}
-:subject: <Subject for cover goes here>
-:description:  <Description for cover goes here>
+:subject: Ansible Execution Environments Introduction
+:description:  Examining Execution Environments and Execution Environment Images
 Travis Michette <tmichett@redhat.com>
 :doctype: book
 :customer:  GLS
@@ -50,6 +50,10 @@ endif::[]
 
 = Using Execution Environments and Exploring the EEI
 
+== Execution Environment Access
+
+It is possible to use the *ansible-navigator* command to access the Execution Environment outside of using it to just execute Ansible playbooks. It is also possible to use *exec --it* with *-- /bin/bash* to open an interactive terminal. It is also possible to pass single commands with  *exec --it* with *-- <command>*.
+
 .Access the Container
 [source,bash]
 ----
@@ -82,11 +86,13 @@ bash-4.4# ansible-galaxy role list
 [WARNING]: - the configured path /home/runner/.ansible/roles does not exist.
 ----
 
+.*ansible-navigator* Always Launches Ephemeral Containers
 [IMPORTANT]
 =====
 *NOTE*: Once a command has been run within a container, upon completion the *exec* session will execute the remaining functions of *ansible-navigator* which will cause the container and the ephemeral storage to be cleaned up.
 =====
 
+.Ephemeral Containers with *ansible-navigator* vs. *podman*
 [TIP]
 =====
 It is possible to use the Podman to keep a longer session open within the container.
@@ -110,6 +116,23 @@ bash-4.4#
 The *podman run* command will create a container named *navigator* and will remove the container when you exit the BASH prompt. If you want the container to remain, don't put in the *--rm* in the command line.
 
 =====
+
+.Container User is *root*
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec -- whoami
+root
+----
+
+.Determining Container *ansible* Version and Configuration Options
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec -- ansible --version
+ansible [core 2.13.3]
+  config file = /home/student/Github/AnsiblePlaybooks/AAP2/navigator/ansible.cfg
+  configured module search path = ['/home/runner/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+----
+
 
 == Ansible AD-HOC Commands
 
@@ -176,3 +199,58 @@ devops
 workstation | CHANGED | rc=0 >>
 devops
 ----
+
+== Exploring Ansible Navigator
+
+It is possible to open the Execution Environment using *ansible-navigator* with the *exec* sub-command and no additional option.
+
+.Interacting Directly with EE using *ansible-navigator*
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec
+----
+
+.Viewing Mounted Filesystem (The current working directory is mounted to */* as an Overlay Filesystem)
+[source,bash]
+----
+[student@workstation navigator]$ ansible-navigator exec -- pwd
+/home/student/Github/AnsiblePlaybooks/AAP2/navigator
+
+[student@workstation navigator]$ ansible-navigator exec -- ls
+ANR_Setup.yml	  EE_Demo_Readme.adoc		  ansible-navigator.log  inventory
+Demo_Clean.sh	  Localhost_Navigator_Demo.yml	  ansible-navigator.yml  playbook.yml
+Demo_Complete.sh  Workstation_Navigator_Demo.yml  ansible.cfg
+----
+
+
+.Additional Volume Mounts
+[source,bash]
+----
+[student@workstation navigator]$ export ANSIBLE_NAVIGATOR_EXECUTION_ENVIRONMENT_VOLUME_MOUNTS=/home/student:/tmp
+
+[student@workstation navigator]$ ansible-navigator exec
+
+bash-4.4# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          20G  6.7G   13G  35% /
+/dev/vda4        20G  6.7G   13G  35% /tmp
+tmpfs            64M     0   64M   0% /dev
+tmpfs           2.8G   84K  2.8G   1% /dev/shm
+devtmpfs        2.8G     0  2.8G   0% /dev/tty
+
+bash-4.4# ls /tmp
+Github	ansible-navigator.log
+----
+
+
+.Viewing Mounted Filesystems and Adding Additional Mounts
+[source,bash]
+----
+[student@workstation navigator]$ export ANSIBLE_NAVIGATOR_EXECUTION_ENVIRONMENT_VOLUME_MOUNTS=/home/student:/tmp\;/home/student/Github:/mnt
+
+
+----
+
+== References
+
+* *Ansible Navigator Command*: https://github.com/ansible/ansible-navigator/blob/main/docs/faq.md
