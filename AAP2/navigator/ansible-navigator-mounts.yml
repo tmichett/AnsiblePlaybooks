@@ -1,0 +1,21 @@
+---
+ansible-navigator:
+  ansible:
+    config:
+      path: ./ansible.cfg
+  execution-environment:
+    image: utility.lab.example.com/ee-supported-rhel8:latest
+    pull:
+      policy: missing
+    volume-mounts:
+      - src: "/home/student/Github"
+        dest: "/mnt"
+        options: "Z"
+
+      - src: "/home/student"
+        dest: "/tmp"
+        options: "Z"
+
+  mode: stdout
+  playbook-artifact:
+    enable: false
