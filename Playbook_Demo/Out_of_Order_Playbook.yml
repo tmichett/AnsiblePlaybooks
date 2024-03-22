@@ -21,3 +21,6 @@
     - name:  Pre-Task to login to the API for Ansible Tasks (Pre-Tasks Section)
       debug:
         msg: This will use a module to login to the API
+
+  roles:
+    - tmichett.
