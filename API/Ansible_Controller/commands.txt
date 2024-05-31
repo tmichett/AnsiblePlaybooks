@@ -1,0 +1,19 @@
+curl -X GET https://controller.lab.example.com/api/ -k
+
+
+curl -X GET https://controller.lab.example.com/api/v2/ -k -s | jq .
+
+
+curl -X GET --user admin:redhat https://controller.lab.example.com/api/v2/jobs/ -k -s | jq .
+
+curl -X GET --user admin:redhat https://controller.lab.example.com/api/v2/projects/ -k -s | jq .
+
+curl -X GET --user admin:redhat https://controller.lab.example.com/api/v2/job_templates/ -k -s | jq .
+
+curl -X GET --user admin:redhat https://controller.lab.example.com/api/v2/job_templates/ -k -s | jq '.results[] | {name}'
+
+## BONUS - Show Names Only
+
+curl -X GET --user admin:redhat https://controller.lab.example.com/api/v2/job_templates/ -k -s | jq '.results[] | {name}' | sed 's/{//' | sed 's/}//' | sed '/^$/d'
+
+curl -X POST --user admin:redhat https://controller.lab.example.com/api/v2/job_templates/"DO467 Demo Job - Testing Inventory"/launch/ -k -s | jq .

@@ -1,0 +1,19 @@
+---
+- name: Demo URL Module for API Interaction
+  hosts: localhost
+  vars_files: sat_vars.yml
+
+  tasks:
+    - name: List Organizations
+      ansible.builtin.uri:
+        url: "{{ sat_url  }}/api/v2/organizations"
+        user: "{{ sat_un }}"
+        password: "{{ sat_pw }}"
+        force_basic_auth: true
+        method: get
+        validate_certs: false
+      register: organizations
+
+    - name: Print Organizations
+      ansible.builtin.debug:
+        var: organizations['json']['results'] | map(attribute='name') | list ## to_nice_json  ### Had to Map Attribute for name ## Wanted output as list

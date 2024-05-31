@@ -1,0 +1,6 @@
+---
+- name: Install JQ to Satellite 
+  hosts: satellite.lab.example.com
+  tasks:
+    - name: Use Foreman and Satellite Maintain to Install JQ
+      shell: satellite-maintain packages install -y jq

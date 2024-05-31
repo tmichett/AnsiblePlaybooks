@@ -1,0 +1,12 @@
+---
+ansible-navigator:
+  execution-environment:
+    image: hub.lab.example.com/ee-supported-rhel8:latest
+    pull:
+      policy: missing
+  logging:
+    file: /dev/null
+  mode: stdout
+  playbook-artifact:
+    enable: false
+...

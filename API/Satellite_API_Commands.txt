@@ -1,0 +1,24 @@
+## List Hosts by Name
+
+curl --request GET --user admin:redhat https://satellite.lab.example.com/api/v2/hosts | jq | grep '"name":'
+
+## List Orgs by Name
+
+curl --request GET --user admin:redhat https://satellite.lab.example.com/api/v2/organizations | jq | grep '"name":'
+
+
+## Create Training Org
+
+curl --header "Content-Type:application/json" --request POST --user admin:redhat --data @training.json https://satellite.lab.example.com/katello/api/organizations | python3 -m json.tool
+
+## Delete Training Org
+
+# Look for OrgID
+
+curl --request GET --user admin:redhat https://satellite.lab.example.com/api/v2/organizations | jq
+
+# Copy in OrgID
+
+curl --request DELETE --user admin:redhat https://satellite.lab.example.com/katello/api/organizations/17
+
+

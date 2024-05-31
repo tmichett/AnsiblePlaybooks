@@ -1,0 +1,3 @@
+## Playbook Jinja Filters require JMESPATH
+
+sudo -i dnf install python-jmespath
