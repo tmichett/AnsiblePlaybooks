@@ -1,0 +1,8 @@
+---
+- name: Dump facts
+  hosts: servera
+  become: true
+  tasks:
+    - name: Print Facts
+      debug:
+        var: ansible_local
