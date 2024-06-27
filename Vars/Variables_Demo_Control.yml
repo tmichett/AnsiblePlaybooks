@@ -3,6 +3,7 @@
   hosts: localhost
   vars:
     var_string: I am a string
+    var_string_quotes: "I am also a string"
     var_int_string: "2"
     var_float_string: "2.0"
     var_int: 3
@@ -13,6 +14,10 @@
     - name: Print the string
       ansible.builtin.debug:
         msg: I am the value {{ var_string }} and I am a {{ var_string | type_debug }}.
+
+    - name: Print the string with quotes
+      ansible.builtin.debug:
+        msg: I am the value {{ var_string_quotes }} and I am a {{ var_string_quotes | type_debug }}.
 
     - name: Print the int_string
       ansible.builtin.debug:
