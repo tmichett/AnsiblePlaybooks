@@ -1,0 +1,61 @@
+---
+- name: This is a playbook to show variables and their type
+  hosts: localhost
+  vars:
+    var_string: I am a string
+    var_int_string: "2"
+    var_float_string: "2.0"
+    var_int: 3
+    var_float: 3.0
+    var_bool_word: yes
+    var_bool_number: 1
+  tasks:
+    - name: Print the string
+      ansible.builtin.debug:
+        msg: I am the value {{ var_string }} and I am a {{ var_string | type_debug }}.
+
+    - name: Print the int_string
+      ansible.builtin.debug:
+        msg: I am the value {{ var_int_string }} and I am a {{ var_int_string | type_debug }}.
+
+
+    - name: Print the float_string
+      ansible.builtin.debug:
+        msg: I am the value {{ var_float_string }} and I am a {{ var_float_string | type_debug }}.
+
+    - name: Print the int
+      ansible.builtin.debug:
+        msg: I am the value {{ var_int }} and I am a {{ var_int | type_debug }}.
+
+    - name: Print the float
+      ansible.builtin.debug:
+        msg: I am the value {{ var_float }} and I am a {{ var_float | type_debug }}.
+
+
+    - name: Print the var_bool_word
+      ansible.builtin.debug:
+        msg: I am the value {{ var_bool_word }} and I am a {{ var_bool_word | type_debug }}.
+
+    - name: Print the var_bool_number
+      ansible.builtin.debug:
+        msg: I am the value {{ var_bool_number }} and I am a {{ var_bool_number | type_debug }}.
+
+    - name: Set fact    
+      ansible.builtin.set_fact:
+        var_bool_word_string: "{{ var_bool_word | string }}" ## Ansible still evaluates as a bool.
+        var_bool_number_bool: "{{ var_bool_number | bool }}"
+        var_int_string_int: "{{ var_int_string | int }}"
+        var_int_string_float: "{{ var_int_string | float }}"
+
+## Still need to massage the data with filters because the newly registered variables don't always hold the Type.
+    - name: Display Modified Variables
+      ansible.builtin.debug:
+        msg: |
+            I am the var_bool_word_string {{ var_bool_word_string | string }} and I am a {{ var_bool_word_string | string | type_debug }}.
+            I am the var_bool_number_bool {{ var_bool_number_bool }} and I am a {{ var_bool_number_bool | type_debug }}.
+            I am the var_int_string_int {{  var_int_string_int | int }} and I am a {{  var_int_string_int | int | type_debug }}.
+            I am the var_int_string_float {{ var_int_string_float }} and I am a {{ var_int_string_float | float | type_debug }}.
+
+
+
+
