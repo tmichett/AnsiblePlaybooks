@@ -1,0 +1,52 @@
+The become_flags option in Ansible allows you to pass specific flags to the underlying privilege escalation method, such as sudo or su. These flags are used to customize the behavior of privilege escalation. While the flags available can depend on the method you're using (like sudo, su, pbrun, etc.), here’s a list of commonly used flags when using sudo as the privilege escalation method.
+
+Common become_flags for sudo:
+-u <user>:
+
+Run the command as a specified user, other than root. This is typically used when you want to escalate to a non-root user.
+Example: become_flags: "-u username"
+
+-i:
+
+Start a login shell as the target user. This will simulate a login shell, loading the user's profile and environment.
+Example: become_flags: "-i"
+
+-H:
+
+Set the HOME environment variable to the home directory of the target user. This is commonly used when running commands as root to ensure the correct home directory is used.
+Example: become_flags: "-H"
+
+-E:
+
+Preserve the user environment when invoking the command. This is useful for maintaining environment variables.
+Example: become_flags: "-E"
+
+-p:
+
+Define a custom prompt when sudo requests a password.
+Example: become_flags: "-p 'Custom password prompt: '"
+
+-S:
+
+Read the password from standard input, which is typically useful for automating sudo commands in non-interactive scripts.
+Example: become_flags: "-S"
+
+-n:
+
+Run sudo in non-interactive mode, where it will not ask for a password, and it will fail immediately if a password is required.
+Example: become_flags: "-n"
+
+-v:
+
+Validate the user's sudo credentials, checking the timestamp but not running a command. This is often used for refreshing a timestamp in automated processes.
+Example: become_flags: "-v"
+
+-b:
+
+Run the command in the background.
+Example: become_flags: "-b"
+
+-C <fd>:
+
+Specify an open file descriptor to write the sudo output to. This can be used for logging purposes.
+Example: become_flags: "-C 9"
